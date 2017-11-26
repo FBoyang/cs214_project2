@@ -8,7 +8,7 @@
 #include "tid_list.h"
 #include "quicksort.h"
 
-const int MIN_THREAD_LENGTH = 50;
+const int MIN_THREAD_LENGTH = 100;
 const int MIN_LENGTH = 10;
 
 int partition(char ***matrix, int field_index, int low, int high);

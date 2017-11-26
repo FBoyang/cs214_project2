@@ -12,7 +12,7 @@ filesplit: filesplit.c
 	gcc -Wall -O -g -o filesplit filesplit.c
 
 average: average.c
-	gcc -Wall -O -g -o average average.c
+	gcc -lm -Wall -O -g -o average average.c
 
 .PHONY: clean
 clean:

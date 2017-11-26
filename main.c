@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 	struct csv table;
 	struct tid_list tids;
 	struct dirwalk_args dwargs;
-	//struct quicksort_args qsargs;
+	struct quicksort_args qsargs;
 	field_index = -1;
 	input_dir = ".";
 	output_dir = ".";
@@ -57,15 +57,13 @@ int main(int argc, char **argv)
 		dwargs.tids = &tids;
 		dwargs.dir = input_dir;
 		dirwalk((void *) &dwargs);
-		/*
 		qsargs.matrix = table.matrix;
 		qsargs.tids = &tids;
 		qsargs.field_index = field_index;
 		qsargs.low = 0;
 		qsargs.high = table.num_rows;
 		quicksort((void *) &qsargs);
-		*/
-		serial_quicksort(table.matrix, field_index, 0, table.num_rows);
+		//serial_quicksort(table.matrix, field_index, 0, table.num_rows);
 		print_csv(&table, field_name, output_dir);
 		if (verbosity)
 			print_tid_list(&tids, verbosity);
