@@ -3,7 +3,6 @@
 #include <string.h>
 #include <dirent.h>
 #include <pthread.h>
-#include <stdbool.h>
 #include "tid_list.h"
 #include "dirwalk.h"
 #include "csv.h"

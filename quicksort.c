@@ -11,7 +11,6 @@
 const int MIN_THREAD_LENGTH = 50;
 const int MIN_LENGTH = 10;
 
-void serial_quicksort(char ***matrix, int field_index, int low, int high);
 int partition(char ***matrix, int field_index, int low, int high);
 int compare(char *a, char *b);
 int lexcmp(char *a, int alen, char *b, int blen);

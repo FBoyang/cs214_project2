@@ -3,6 +3,7 @@
 
 struct csv {
 	char ***matrix;
+	char **lines;
 	pthread_mutex_t mutex;
 	int num_rows;
 	int row_capacity;
@@ -15,7 +16,7 @@ struct csvargs {
 
 void initialize_csv(struct csv *table);
 void *csvread(void *arg);
-void append_csv(struct csv *table, char ***new_entries, int num_new);
+void append_csv(struct csv *table, char ***new_entries, char **new_lines, int num_new);
 void print_csv(struct csv *table, char *field_name, char *output_dir);
 void free_csv(struct csv *table);
 

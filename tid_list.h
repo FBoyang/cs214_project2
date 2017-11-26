@@ -10,7 +10,7 @@ struct tid_list {
 
 void initialize_tid_list(struct tid_list *tids);
 void append_tid_list(struct tid_list *tids, pthread_t *new_tids, int num_new);
-void print_tid_list(struct tid_list *tids, bool is_verbose);
+void print_tid_list(struct tid_list *tids, int verbosity);
 void free_tid_list(struct tid_list *tids);
 
 #endif

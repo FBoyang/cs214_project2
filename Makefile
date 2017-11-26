@@ -3,7 +3,7 @@ sources = csv.c dirwalk.c quicksort.c tid_list.c main.c
 headers = csv.h dirwalk.h quicksort.h tid_list.h
 
 .PHONY: all
-all: sorter filesplit
+all: sorter filesplit average
 
 sorter: $(sources) $(headers)
 	gcc -pthread -lm -Wall -O -g -o sorter $(sources)
@@ -11,6 +11,9 @@ sorter: $(sources) $(headers)
 filesplit: filesplit.c
 	gcc -Wall -O -g -o filesplit filesplit.c
 
+average: average.c
+	gcc -Wall -O -g -o average average.c
+
 .PHONY: clean
 clean:
-	rm -vf sorter filesplit
+	rm -vf sorter filesplit average

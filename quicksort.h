@@ -12,5 +12,6 @@ struct quicksort_args {
 };
 
 void *quicksort(void *arg);
+void serial_quicksort(char ***matrix, int field_index, int low, int high);
 
 #endif
