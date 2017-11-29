@@ -9,7 +9,7 @@
 #include "quicksort.h"
 
 const int MIN_THREAD_LENGTH = 100;
-const int MIN_LENGTH = 10;
+const int MIN_LENGTH = 5;
 
 int partition(char ***matrix, int field_index, int low, int high);
 int compare(char *a, char *b);
@@ -60,7 +60,7 @@ void serial_quicksort(char ***matrix, int field_index, int low, int high)
 	}
 	pivot = partition(matrix, field_index, low, high);
 	serial_quicksort(matrix, field_index, low, pivot);
-	serial_quicksort(matrix, field_index, pivot, high);
+	serial_quicksort(matrix, field_index, pivot + 1, high);
 }
 
 #ifdef _ALT_PARTITION

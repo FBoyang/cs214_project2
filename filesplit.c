@@ -15,15 +15,20 @@ int main(int argc, char **argv)
 	int num_lines;
 	int line_capacity;
 	int i, j;
+	char *format;
 	infile = NULL;
 	num_ofs = 0;
-	while ((c = getopt(argc, argv, "i:n:")) != -1) {
+	format = "f%03d.csv";
+	while ((c = getopt(argc, argv, "i:n:p")) != -1) {
 		switch (c) {
 		case 'i':
 			infile = fopen(optarg, "r");
 			break;
 		case 'n':
 			num_ofs = atoi(optarg);
+			break;
+		case 'p':
+			format = "f%d.csv";
 		/* we will let getopt() deal with errors */
 		}
 	}
@@ -32,7 +37,7 @@ int main(int argc, char **argv)
 	}
 	outfiles = malloc(num_ofs * sizeof(*outfiles));
 	for (i = 0; i < num_ofs; i++) {
-		sprintf(ofname, "f%03d.csv", i + 1);
+		sprintf(ofname, format, i + 1);
 		outfiles[i] = fopen(ofname, "w");
 	}
 	line = NULL;
@@ -71,4 +76,5 @@ int main(int argc, char **argv)
 		fclose(outfiles[i]);
 	free(outfiles);
 	free(linearr);
+	return 0;
 }

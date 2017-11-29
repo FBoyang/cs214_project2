@@ -87,6 +87,7 @@ void *dirwalk(void *arg)
 			free(entname);
 		}
 	}
+	closedir(dir);
 	append_tid_list(args->tids, tid_array, num_tids);
 	for (i = 0; i < num_tids; i++)
 		pthread_join(tid_array[i], NULL);
