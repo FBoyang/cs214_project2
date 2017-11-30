@@ -6,7 +6,7 @@ headers = csv.h dirwalk.h quicksort.h tid_list.h
 all: sorter filesplit average
 
 sorter: $(sources) $(headers)
-	gcc -pthread -lm -Wall -O -g -o sorter $(sources)
+	gcc -pthread -lm -Wall -g -o sorter $(sources)
 
 filesplit: filesplit.c
 	gcc -Wall -O -g -o filesplit filesplit.c

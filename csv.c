@@ -42,7 +42,6 @@ char *field_list[NUM_COLS] = {
 void initialize_csv(struct csv *table)
 {
 	table->matrix = NULL;
-	table->lines = NULL;
 	pthread_mutex_init(&table->mutex, NULL);
 	table->num_rows = 0;
 	table->row_capacity = 0;
@@ -53,12 +52,11 @@ void *csvread(void *arg)
 	struct csvargs *args;
 	FILE *infile;
 	char ***matrix;
-	char **lines;
 	int row;
 	int row_capacity;
 	char *line, *linep;
 	size_t n;
-	char *str;
+	char *str, *strex;
 	int i;
 	args = (struct csvargs *) arg;
 	if ((infile = fopen(args->file, "r")) == NULL) {
@@ -75,7 +73,6 @@ void *csvread(void *arg)
 	}
 	row_capacity = 4;
 	matrix = malloc(row_capacity * sizeof(*matrix));
-	lines = malloc(row_capacity * sizeof(*lines));
 	row = 0;
 	while (getline(&line, &n, infile) != -1) {
 		if (strlen(line) >= 2 && strcmp(line + strlen(line) - 2, "\r\n") == 0)
@@ -83,52 +80,47 @@ void *csvread(void *arg)
 		if (row >= row_capacity) {
 			row_capacity *= 2;
 			matrix = realloc(matrix, row_capacity * sizeof(*matrix));
-			lines = realloc(lines, row_capacity * sizeof(*lines));
 		}
 		matrix[row] = malloc(NUM_COLS * sizeof(**matrix));
-		lines[row] = line;
+		if (matrix[row] == NULL) {
+			fputs("failed to allocate row\n", stderr);
+			exit(EXIT_FAILURE);
+		}
 		linep = line;
 		for (i = 0, str = strsep(&linep, ","); str; i++, str = strsep(&linep, ",")) {
 			if (*str == '\0') {
 				matrix[row][i] = NULL;
 			} else if (*str == '"') {
-				matrix[row][i] = str + 1;
-				strsep(&linep, "\"");
-				str[strlen(str)] = ',';
+				strex = strsep(&linep, "\"");
 				strsep(&linep, ",");
+				matrix[row][i] = malloc((strlen(str) + strlen(strex) + 1) * sizeof(char));
+				sprintf(matrix[row][i], "%s,%s", str + 1, strex);
 			} else {
-				matrix[row][i] = str;
+				matrix[row][i] = malloc((strlen(str) + 1) * sizeof(char));
+				strcpy(matrix[row][i], str);
 			}
 		}
 		row++;
-		line = NULL;
-		n = 0;
 	}
 	fclose(infile);
-	append_csv(args->table, matrix, lines, row);
+	free(line);
+	append_csv(args->table, matrix, row);
 	free(matrix);
-	free(lines);
 	return NULL;
 }
 
-void append_csv(struct csv *table, char ***new_entries, char **new_lines, int num_new)
+void append_csv(struct csv *table, char ***new_entries, int num_new)
 {
-	char ***matrixptr, **linesptr;
 	int i;
 	pthread_mutex_lock(&table->mutex);
 	if (table->num_rows + num_new > table->row_capacity) {
-		table->row_capacity = 2 * (table->row_capacity + num_new);
+		table->row_capacity = 2 * (table->num_rows + num_new);
 		table->matrix = realloc(table->matrix, table->row_capacity * sizeof(*table->matrix));
-		table->lines = realloc(table->lines, table->row_capacity * sizeof(*table->lines));
 	}
-	matrixptr = table->matrix + table->num_rows;
-	linesptr = table->lines + table->num_rows;
+	for (i = 0; i < num_new; i++)
+		table->matrix[table->num_rows + i] = new_entries[i];
 	table->num_rows += num_new;
 	pthread_mutex_unlock(&table->mutex);
-	for (i = 0; i < num_new; i++) {
-		matrixptr[i] = new_entries[i];
-		linesptr[i] = new_lines[i];
-	}
 }
 
 void print_csv(struct csv *table, char *field_name, char *output_dir)
@@ -163,13 +155,13 @@ void print_csv(struct csv *table, char *field_name, char *output_dir)
 
 void free_csv(struct csv *table)
 {
-	int i;
+	int i, j;
 	for (i = 0; i < table->num_rows; i++) {
+		for (j = 0; j < NUM_COLS; j++)
+			free(table->matrix[i][j]);
 		free(table->matrix[i]);
-		free(table->lines[i]);
 	}
 	free(table->matrix);
-	free(table->lines);
 	pthread_mutex_destroy(&table->mutex);
 }
 

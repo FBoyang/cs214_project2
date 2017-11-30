@@ -14,18 +14,16 @@ void initialize_tid_list(struct tid_list *tids)
 
 void append_tid_list(struct tid_list *tids, pthread_t *new_tids, int num_new)
 {
-	pthread_t *regionptr;
 	int i;
 	pthread_mutex_lock(&tids->mutex);
 	if (tids->num_tids + num_new > tids->capacity) {
 		tids->capacity = 2 * (tids->capacity + num_new);
 		tids->list = realloc(tids->list, tids->capacity * sizeof(*tids->list));
 	}
-	regionptr = tids->list + tids->num_tids;
+	for (i = 0; i < num_new; i++)
+		tids->list[tids->num_tids + i] = new_tids[i];
 	tids->num_tids += num_new;
 	pthread_mutex_unlock(&tids->mutex);
-	for (i = 0; i < num_new; i++)
-		regionptr[i] = new_tids[i];
 }
 
 void print_tid_list(struct tid_list *tids, int verbosity)
